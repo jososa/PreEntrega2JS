@@ -1,0 +1,35 @@
+<h1>Carrito</h1>
+
+{{#each products}}
+<div> 
+    <h2>★━━━━★ {{this.product.title}} ★━━━━★</h2>
+    <p>{{this.product.description}}</p>
+    <p>$ {{this.product.price}}</p>
+    <p>Cantidad: {{this.quantity}}</p>
+    <div>
+        <p>Subtotal: $ {{multiply this.product.price this.quantity}}</p>    
+</div>
+<form action="/cart/{{../cartId}}/update/{{this._id}}" method="post">
+    <input type="hidden" name="quantity" value="1">
+    <button type="submit">+1</button>
+</form>
+<form action="/cart/{{../cartId}}/update/{{this._id}}" method="post">
+    <input type="hidden" name="quantity" value="-1">
+    <button type="submit">-1</button>
+</form>
+    <form action="/cart/{{../cartId}}/remove/{{this._id}}" method="post">
+        <button type="submit">Eliminar del carrito</button>
+    </form>
+</div>
+{{/each}}
+
+<div>
+    <h3>Total: $ {{total}}</h3>
+    <form action="/cart/{{cartId}}/checkout" method="post">
+        <button type="submit">Comprar</button>
+    </form>
+</div>
+<div>
+    <form action="/cart/{{cartId}}/empty" method="post">
+        <button type="submit">Vaciar Carrito</button>
+</div>

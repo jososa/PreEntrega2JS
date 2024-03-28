@@ -1,0 +1,83 @@
+{{#if isValid}}
+
+<form action="/products" method="get">
+    <label for="query">Buscar:</label>
+    <input type="text" id="query" name="query">
+
+    <label for="category">Categoría:</label>
+    <input type="text" id="category" name="category">
+
+    <label for="status">Estado:</label>
+    <select id="status" name="status">
+        <option value="">Todos</option>
+        <option value="true">Disponible</option>
+        <option value="false">No disponible</option>
+    </select>
+
+    <label for="sort">Ordenar por precio:</label>
+    <select id="sort" name="sort">
+        <option value="">Ninguno</option>
+        <option value="asc">Ascendente</option>
+        <option value="desc">Descendente</option>
+    </select>
+
+    <button type="submit">Filtrar</button>
+</form>
+
+<div>
+    <h1>Productos</h1>
+
+    {{#each products}}
+        <div>
+            <h2>★━━━━★ {{this.title}} ★━━━━★</h2>
+            <p>{{this.description}}</p>
+            <p>Categoría: {{this.category}}</p>
+            <p>Stock: {{this.stock}}</p>  
+            <p>Precio: $ {{this.price}}</p>
+            <form action="/cart/{{../cartId}}/add/{{this._id}}" method="post">
+                <label for="quantity">Cantidad:</label>
+                <input type="number" id="quantity" name="quantity" min="1" max="{{this.stock}}" required>
+                <button type="submit">Agregar al carrito</button>
+            </form>
+        </div>
+        <br />
+        <div>
+            <form action="/products/update/{{this._id}}" method="get">
+                <button type="submit">Editar producto</button>
+            </form>
+        </div>
+        <div>
+            <form action="/products/delete/{{this._id}}" method="post">
+                <button type="submit">Eliminar producto</button>
+            </form>
+        </div>
+    {{/each}}
+</div>
+<br />
+
+<div>
+    {{#if hasPrevPage}}
+    <a href={{this.prevLink}}>
+        << Anterior </a>
+            {{/if}}
+
+            {{!-- numero de pagina --}}
+            &nbsp;
+            {{this.page}}
+            &nbsp;
+
+            {{#if hasNextPage}}
+            <a href={{this.nextLink}}>
+                Siguiente >> </a>
+    {{/if}}
+</div>
+{{else}}
+    <h1>No hay Productos para mostrar</h1>
+{{/if}}
+
+
+
+
+
+
+

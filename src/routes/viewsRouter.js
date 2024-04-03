@@ -24,9 +24,6 @@ viewsRouter.get("/chat",(req,res)=>{
 viewsRouter.get("/products", async (req, res) => {
     try {
         let allProducts = await productos.getAllProducts(req.query)
-      //const cart = await carrito.getOrCreateCart(); //Obtiene o crea un carrito
-      //const result = await productos.getAllProducts(req.query);
-      //result.cartId = cart._id; //Agrega el id del carrito al resultado para usarlo al agregar productos
       allProducts.prevLink = allProducts.hasPrevPage
         ? `http://localhost:8080/products?page=${allProducts.prevPage}`
         : "";
@@ -36,7 +33,6 @@ viewsRouter.get("/products", async (req, res) => {
         allProducts.isValid = !(
         req.query.page < 1 || req.query.page > allProducts.totalPages
       )
-      //res.render("products", {productos : result})
       res.render('products', allProducts)
     } catch (error) {
       console.error(error)
@@ -44,22 +40,17 @@ viewsRouter.get("/products", async (req, res) => {
     }
   })
 
-
-viewsRouter.get("/cart", async (req, res) => {
+  viewsRouter.get('/carts/:cid', async (req, res) => {
     try {
-      // Busca el primer carrito disponible o crea uno nuevo si no hay ninguno.
-      const cartId = await carrito.getCarts();
-      //const cid = cartId._id.toString();
+        const { cid } = req.params
+        const result = await carrito.getCartById(cid)
 
-      //console.log(cid)
-      // Usa el método getCartById para obtener el carrito con todos sus productos.
-     // const cart = await carrito.getCartById(cid);
-      //cart.cartId = cid; // Agrega el id del carrito al resultado para usarlo en CRUD  
-      res.render("cart", cartId);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Error al obtener el carrito");
+        if(result === null || typeof(result) === 'string') return res.render('cart', { result: false, message: 'ID not found' })
+        return res.render('cart', { result })
+    } catch (err) {
+        console.log(err)
     }
-  });
+})
+
 
 export default viewsRouter

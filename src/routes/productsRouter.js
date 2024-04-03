@@ -7,6 +7,7 @@ const productos = new ProductManager()
 
 const productsRouter = Router()
 
+//Obtener productos
 productsRouter.get("/", async (req, res) => {
   try {
     const products = await productos.getAllProducts(req.query);
@@ -15,23 +16,26 @@ productsRouter.get("/", async (req, res) => {
     console.log(error);
     res.status(500).send({ status: "error", error: error.message });
   }
-    // const getProd = await productos.getProducts()
-    // let limit = parseInt(req.query.limit)
-    // if(!limit) return res.send(await getProd)
-    // let allProd = await getProd
-    // let prodLimit = allProd.slice(0,limit)
-    // res.send(prodLimit)
 })
 
-productsRouter.get("/:prodId", async (req, res) => {
-    const getProd = await productos.getProducts()
-    let prodId = parseInt(req.params.prodId)
-    let allProd = await getProd
-    let prod = allProd.find((product) => (product.id == prodId))
-    if(!prod) return res.json({ error: "Producto no encontrado" })
-    res.send(prod)
+//Obtener producto por ID
+productsRouter.get("/:pid", async (req, res) => {
+  const { pid } = req.params
+  try {
+    const product = await productos.getProductById(pid)
+    if (!product) {
+      return res
+        .status(404)
+        .send({ status: "error", error: "Product not found" })
+    }
+    res.status(200).send({ status: "success", payload: product })
+  } catch (error) {
+    console.log(error)
+    res.status(500).send({ status: "error", error: error.message })
+  }
 })
 
+//Crear producto
 productsRouter.post("/", async (req, res) => {
     const newProduct = req.body;
     try {
@@ -42,6 +46,7 @@ productsRouter.post("/", async (req, res) => {
     }
 })
 
+//Modificar producto
 productsRouter.put("/:prodId", async (req, res) => {
 
     const productId = req.params.prodId
@@ -57,6 +62,7 @@ productsRouter.put("/:prodId", async (req, res) => {
     }
 })
 
+//Eliminar producto
 productsRouter.delete("/:prodId", async (req, res) => {
 
     const productId = req.params.prodId

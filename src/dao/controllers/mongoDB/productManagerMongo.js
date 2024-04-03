@@ -4,7 +4,7 @@ export default class ProductManager {
 
     async getAllProducts(params) {
         const {
-          limit = 10, // default limit = 3
+          limit = 10, // default limit = 10
           page = 1, // default page = 1
           sort = null,
           query = null,

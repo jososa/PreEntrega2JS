@@ -1,6 +1,7 @@
 import { Router } from "express"
 import ProductManager from '../dao/controllers/mongoDB/productManagerMongo.js'
 import CartManager from "../dao/controllers/mongoDB/cartManagerMongo.js"
+import { auth } from "../middlewares/auth.js"
 
 const productos = new ProductManager()
 const carrito = new CartManager()
@@ -8,20 +9,20 @@ const carrito = new CartManager()
 const viewsRouter = Router()
 
 
-viewsRouter.get("/", async (req, res)=>{
+viewsRouter.get("/", auth, async (req, res)=>{
     let allProducts = await productos.getProducts()
-    res.render('home', {products : allProducts})
+    res.render('home', {user: req.session.user, products : allProducts})
 })
 
-viewsRouter.get("/realtimeproducts", async (req, res) => {
+viewsRouter.get("/realtimeproducts", auth, async (req, res) => {
     res.render("realtimeproducts")
 })
 
-viewsRouter.get("/chat",(req,res)=>{
+viewsRouter.get("/chat", auth, (req,res)=>{
     res.render("chat")
 })
 
-viewsRouter.get("/products", async (req, res) => {
+viewsRouter.get("/products", auth, async (req, res) => {
     try {
         let allProducts = await productos.getAllProducts(req.query)
       allProducts.prevLink = allProducts.hasPrevPage
@@ -40,7 +41,7 @@ viewsRouter.get("/products", async (req, res) => {
     }
   })
 
-  viewsRouter.get('/carts/:cid', async (req, res) => {
+  viewsRouter.get('/carts/:cid', auth, async (req, res) => {
     try {
         const { cid } = req.params
         const result = await carrito.getCartById(cid)
@@ -50,6 +51,14 @@ viewsRouter.get("/products", async (req, res) => {
     } catch (err) {
         console.log(err)
     }
+})
+
+viewsRouter.get('/register', (req, res) => {
+  res.render('register');
+})
+
+viewsRouter.get('/login', (req, res) => {
+  res.render('login');
 })
 
 

@@ -9,6 +9,9 @@ import cartRouter from './routes/cartRouter.js'
 import viewsRouter from './routes/viewsRouter.js'
 import connectMongoDB from './config/connectionString.js'
 import messageManager from './dao/controllers/mongoDB/messageManagerMongo.js'
+import sessionRouter from './routes/sessionRouter.js'
+import session from 'express-session'
+import MongoStore from 'connect-mongo'
 
 const productos = new ProductManager()
 const msg = new messageManager()
@@ -34,10 +37,23 @@ app.set('view engine', 'handlebars')
 //Routes
 app.use("/api/products", productsRouter)
 app.use("/api/carts", cartRouter)
+app.use("/api/sessions", sessionRouter)
 
 connectMongoDB()
 
 const server = app.listen(PORT,()=>console.log("Listening in",PORT))
+
+const connectionString = "mongodb+srv://user2024:NewP4ss.2024@ecommerce.fyo85ww.mongodb.net/?retryWrites=true&w=majority&appName=ecommerce"
+
+app.use(session({
+    store: new MongoStore({
+        mongoUrl: connectionString,
+        ttl: 3600
+    }),
+    secret:"Secret",
+    resave: false,
+    saveUninitialized: false
+}))
 
 const socketServer = new Server(server)
 

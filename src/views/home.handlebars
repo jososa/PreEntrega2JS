@@ -2,6 +2,8 @@
 <link rel="stylesheet" href="/css/style.css">
 
 <h1 class="titulo">Productos</h1>
+<h5>Bienvenido {{user.email}}</h5>
+<h6>Rol: {{user.role}}</h6>
 {{#each products}}
 
         <div class="d-flex justify-content-around row pt-4 pb-4 row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
